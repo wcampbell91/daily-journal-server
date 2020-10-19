@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from entries import get_all_entries, get_single_entry
+from entries import get_all_entries, get_single_entry, delete_entry, search_for_entry
+from Moods import get_all_moods, get_single_mood, delete_mood
 
 
 # Here's a class. It inherits from another class.
@@ -34,25 +35,23 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_entry(id)}"
                 else:
                     response = f"{get_all_entries()}"
-            
+            elif resource == "moods":
+                if id is not None:
+                    response = f"{get_single_mood(id)}"
+                else:
+                    response = f"{get_all_moods()}"            
                     
         # Response from parse_url() is a tuple with 3
         # items in it, which means the request was for 
         # '/resource?parameter=value'
-        # elif len(parsed) == 3:
-        #     ( resource, key, value ) = parsed
+        elif len(parsed) == 3:
+            ( resource, key, value ) = parsed
 
-        #     # Is the resource 'customers' and was there a 
-        #     # query parameter that specified the customer
-        #     # email as a filtering value?
-        #     if key == "email" and resource == "customers":
-        #         response = get_customers_by_email(value)
-        #     elif key == "location_id" and resource == "animals":
-        #         response = get_animal_by_location(value)
-        #     elif key == "location_id" and resource == "employees":
-        #         response = get_employee_by_location(value)
-        #     elif key == "status" and resource == "animals":
-        #         response = get_animals_by_status(value)
+            # Is the resource 'customers' and was there a 
+            # query parameter that specified the customer
+            # email as a filtering value?
+            if key == "q" and resource == "entries":
+                response = search_for_entry(value)
         
         self.wfile.write(response.encode())
 
@@ -84,6 +83,19 @@ class HandleRequests(BaseHTTPRequestHandler):
                 pass  # Request had trailing slash: /animals/
 
             return (resource, id)
+    
+    def do_DELETE(self):
+        self._set_headers(204)
+
+        (resource, id) = self.parse_url(self.path)
+
+        if resource == "entries":
+            delete_entry(id)
+        elif resource == "moods":
+            delete_mood(id)
+
+
+        self.wfile.write("".encode())
 
 # This function is not inside the class. It is the starting
 # point of this application.
