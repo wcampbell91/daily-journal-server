@@ -20,3 +20,6 @@ INSERT INTO 'Mood' VALUES (null, 'Happy');
 INSERT INTO 'Mood' VALUES (null, 'Ecstatic');
 INSERT INTO 'Mood' VALUES (null, 'Sad');
 INSERT INTO 'Mood' VALUES (null, 'Angry');
+
+ALTER TABLE 'Mood' 
+RENAME TO 'mood'

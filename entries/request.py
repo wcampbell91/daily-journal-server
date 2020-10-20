@@ -1,4 +1,4 @@
-from models import Journal_entries
+from models import Journal_entries, Mood
 import sqlite3
 import json
 
@@ -13,8 +13,12 @@ def get_all_entries():
             e.concept,
             e.entry,
             e.mood_id,
-            e.date
+            e.date,
+            m.id id,
+            m.label mood
         FROM Journal_entries e
+        JOIN Mood m
+            ON m.id = e.mood_id
         """)
 
         entries = []
@@ -24,7 +28,11 @@ def get_all_entries():
         for row in dataset:
             entry = Journal_entries(row['id'], row['concept'], row['entry'],
                             row['mood_id'], row['date'])
-        
+
+            mood = Mood(row['mood_id'], row['mood'])
+
+            entry.mood = mood.__dict__
+            
             entries.append(entry.__dict__)
 
     return json.dumps(entries)
@@ -40,7 +48,7 @@ def get_single_entry(id):
             e.concept,
             e.entry,
             e.mood_id,
-            e.date
+            e.date,
         FROM Journal_entries e
         WHERE e.id = ?
         """, ( id, ))

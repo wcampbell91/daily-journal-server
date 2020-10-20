@@ -5,6 +5,7 @@ class Journal_entries():
         self.entry = entry
         self.mood_id = mood_id
         self.date = date
+        self.mood = None
 
     def __repr__(self):
         return (f"id: {self.id}")
