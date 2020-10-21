@@ -1,3 +1,4 @@
+
 class Journal_entries():
     def __init__(self, id, concept, entry, mood_id, date):
         self.id = id
