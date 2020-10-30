@@ -1,8 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from entries import get_all_entries, get_single_entry, delete_entry, search_for_entry, create_journal_entry
+from entries import get_all_entries, get_single_entry, delete_entry, search_for_entry, create_journal_entry, update_entry
 from Moods import get_all_moods, get_single_mood, delete_mood
-
+from tags import get_all_tags
 
 # Here's a class. It inherits from another class.
 class HandleRequests(BaseHTTPRequestHandler):
@@ -39,7 +39,11 @@ class HandleRequests(BaseHTTPRequestHandler):
                 if id is not None:
                     response = f"{get_single_mood(id)}"
                 else:
-                    response = f"{get_all_moods()}"            
+                    response = f"{get_all_moods()}"
+            elif resource == "tags":
+                response = f"{get_all_tags()}"
+
+
                     
         # Response from parse_url() is a tuple with 3
         # items in it, which means the request was for 
@@ -111,6 +115,26 @@ class HandleRequests(BaseHTTPRequestHandler):
             new_object = create_journal_entry(post_body)
 
         self.wfile.write(f"{new_object}".encode())
+    
+    def do_PUT(self):
+        self._set_headers(204)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+
+        (resource, id) = self.parse_url(self.path)
+
+        success = False
+
+        if resource == "entries":
+            success = update_entry(id, post_body)
+
+        if success:
+            self._set_headers(204)
+        else: 
+            self._set_headers(404)
+
+        self.wfile.write("".encode())
 
 # This function is not inside the class. It is the starting
 # point of this application.

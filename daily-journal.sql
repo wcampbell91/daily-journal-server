@@ -23,3 +23,21 @@ INSERT INTO 'Mood' VALUES (null, 'Angry');
 
 ALTER TABLE 'Mood' 
 RENAME TO 'mood'
+
+CREATE TABLE 'tag' (
+    'id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    'name' TEXT NOT NULL
+)
+
+CREATE TABLE 'entry_tag' (
+    'id' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    'entry_id' INTEGER NOT NULL, 
+    'tag_id' INTEGER NOT NULL,
+    FOREIGN KEY('entry_id') REFERENCES 'Journal_entries'('id'),
+    FOREIGN KEY('tag_id') REFERENCES 'tag'('id')
+)
+
+INSERT INTO 'tag' VALUES (null, 'interesting')
+INSERT INTO 'tag' VALUES (null, 'funny')
+INSERT INTO 'tag' VALUES (null, 'embarassing')
+INSERT INTO 'tag' VALUES (null, 'scary')
